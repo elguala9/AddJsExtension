@@ -7,5 +7,5 @@
  * @param excludedDirs - array of directory names to exclude
  * @returns array of absolute paths to `index.ts` files
  */
-export declare function findIndexTsPaths(dir: string, excludedDirs?: string[]): string[];
+export declare function findIndexTsPaths(dir: string, excludedDirs?: string[], excludedPaths?: string[]): string[];
 export declare function processFile(filePath: string): void;
