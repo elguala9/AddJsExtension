@@ -1,6 +1,6 @@
 {
   "name": "add-js-import",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Add js extension to esm import",
   "keywords": [
     "esm"
@@ -17,7 +17,7 @@
   "author": "Luca Gualandi",
   "type": "commonjs",
     "bin": {
-    "gen-exports": ".dist/add-js-import.js"
+    "add-js-import": ".dist/add-js-import.js"
   },
   "scripts": {
   "build": "tsc -b",
