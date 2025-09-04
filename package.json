@@ -1,0 +1,30 @@
+{
+  "name": "add-js",
+  "version": "1.0.0",
+  "description": "Add js extension to esm import",
+  "keywords": [
+    "esm"
+  ],
+  "homepage": "https://github.com/elguala9/AddJsExtension#readme",
+  "bugs": {
+    "url": "https://github.com/elguala9/AddJsExtension/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elguala9/AddJsExtension.git"
+  },
+  "license": "LGPL-3.0-or-later",
+  "author": "Luca Gualandi",
+  "type": "commonjs",
+    "bin": {
+    "gen-exports": ".dist/add-js-import.js"
+  },
+  "scripts": {
+  "build": "tsc -b",
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "add-js-import": "ts-node src/add-js-import.ts C:\\Users\\lgualandi\\Documents\\Development\\Parresia\\AddJsExtension -ed test-no"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1"
+  }
+}
