@@ -13,8 +13,9 @@ var path = require("path");
  * @param excludedDirs - array of directory names to exclude
  * @returns array of absolute paths to `index.ts` files
  */
-function findIndexTsPaths(dir, excludedDirs) {
+function findIndexTsPaths(dir, excludedDirs, excludedPaths) {
     if (excludedDirs === void 0) { excludedDirs = []; }
+    if (excludedPaths === void 0) { excludedPaths = []; }
     var results = [];
     var entries;
     try {
@@ -31,23 +32,27 @@ function findIndexTsPaths(dir, excludedDirs) {
             if (excludedDirs.includes(entry.name)) {
                 continue;
             }
-            results.push.apply(results, findIndexTsPaths(fullPath, excludedDirs));
+            results.push.apply(results, findIndexTsPaths(fullPath, excludedDirs, excludedPaths));
         }
         else if (entry.isFile() && entry.name === 'index.ts') {
-            results.push(fullPath);
+            // Escludi se il percorso è tra quelli esclusi
+            if (!excludedPaths.includes(path.resolve(fullPath))) {
+                results.push(fullPath);
+            }
         }
     }
     return results;
 }
 function processFile(filePath) {
     var content = fs.readFileSync(filePath, 'utf8');
+    // Aggiunge .js a tutti gli import che non lo hanno già
     var updated = content
-        .replace(/(from\s+['"])(\.\/[^'";]+)(['"];)/g, function (all, p1, p2, p3) {
+        .replace(/(from\s+['"])([^'";]+)(['";])/g, function (all, p1, p2, p3) {
         if (p2.endsWith('.js'))
             return all;
         return "".concat(p1).concat(p2, ".js").concat(p3);
     })
-        .replace(/(require\(['"])(\.\/[^'"]+)(['"]\))/g, function (all, p1, p2, p3) {
+        .replace(/(require\(['"])([^'"]+)(['"]\))/g, function (all, p1, p2, p3) {
         if (p2.endsWith('.js'))
             return all;
         return "".concat(p1).concat(p2, ".js").concat(p3);
@@ -61,21 +66,23 @@ function parseArgs() {
     var _a;
     var args = process.argv.slice(2);
     var edIndex = args.indexOf('-ed');
-    var targetDir = edIndex === -1
+    var eIndex = args.indexOf('-e');
+    var targetDir = edIndex === -1 && eIndex === -1
         ? (_a = args[0]) !== null && _a !== void 0 ? _a : path.join(process.cwd(), 'packages')
-        : args[0] === '-ed'
+        : args[0] === '-ed' || args[0] === '-e'
             ? path.join(process.cwd(), 'packages')
             : path.resolve(args[0]);
-    var excludedDirs = edIndex !== -1 ? args.slice(edIndex + 1) : [];
-    return { targetDir: targetDir, excludedDirs: excludedDirs };
+    var excludedDirs = edIndex !== -1 ? args.slice(edIndex + 1, eIndex !== -1 ? eIndex : undefined) : [];
+    var excludedPaths = eIndex !== -1 ? args.slice(eIndex + 1) : [];
+    return { targetDir: targetDir, excludedDirs: excludedDirs, excludedPaths: excludedPaths };
 }
 function main() {
-    var _a = parseArgs(), targetDir = _a.targetDir, excludedDirs = _a.excludedDirs;
+    var _a = parseArgs(), targetDir = _a.targetDir, excludedDirs = _a.excludedDirs, excludedPaths = _a.excludedPaths;
     console.log("Scanning \"".concat(targetDir, "\""));
     if (excludedDirs.length > 0) {
         console.log("Excluding directories by name: ".concat(excludedDirs.join(', ')));
     }
-    var indexPaths = findIndexTsPaths(targetDir, excludedDirs);
+    var indexPaths = findIndexTsPaths(targetDir, excludedDirs, excludedPaths);
     console.log('Found index.ts files:');
     indexPaths.forEach(function (p) { return console.log(p); });
     indexPaths.forEach(processFile);

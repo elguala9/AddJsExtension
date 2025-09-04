@@ -22,7 +22,7 @@
   "scripts": {
   "build": "tsc -b",
   "test": "echo \"Error: no test specified\" && exit 1",
-  "add-js-import": "ts-node src/add-js-import.ts C:\\Users\\lgualandi\\Documents\\Development\\Parresia\\AddJsExtension -ed test-no"
+  "add-js-import": "node dist/add-js-import.js C:\\Users\\lgualandi\\Documents\\Development\\Parresia\\AddJsExtension -ed test-no"
   },
   "devDependencies": {
     "@types/node": "^24.3.1"
